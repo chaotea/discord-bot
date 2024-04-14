@@ -7,7 +7,7 @@ cffi==1.15.1
 chardet==4.0.0
 discord==1.7.3
 discord.py==1.7.3
-idna==3.3
+idna==3.7
 jmespath==1.0.1
 multidict==6.0.2
 pycparser==2.21
