@@ -3,6 +3,7 @@ import random
 
 import boto3
 import discord
+import openai
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -20,6 +21,8 @@ VC3 = int(os.getenv("DISCORD_VOICE_CHANNEL_3"))
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_DEFAULT_REGION = os.getenv("AWS_DEFAULT_REGION")
+
+OPENAI_KEY = os.getenv("OPENAI_KEY")
 
 LEBLANC = os.getenv("LEBLANC")
 MORDEKAISER = os.getenv("MORDEKAISER")
@@ -142,8 +145,17 @@ async def on_message(message):
             #     doge_str = f"d{'0' * random.randint(3,10)}ge"
             #     temp = random.choice(dogical_responses)
             #     response = f"{temp[0]}{doge_str}{temp[1]}{temp[2] * random.randint(1,5)}"
-            response = "Comrade Doge, reporting for duty!"
-            await message.channel.send(response)
+
+            # response = "Comrade Doge, reporting for duty!"
+            # await message.channel.send(response)
+
+            response = openai.Completion.create(
+                engine="text-davinci-002",
+                prompt=f"{message.content}",
+                max_tokens=2048,
+                temperature=0.5,
+            )
+            await message.channel.send(response.choices[0].text)
         elif message.content.startswith("comrade"):
             for line in comrade_text.split("\n"):
                 if line:
