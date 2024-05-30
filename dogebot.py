@@ -3,10 +3,9 @@ import random
 
 import boto3
 import discord
-import openai
 from discord.ext import commands
 from dotenv import load_dotenv
-
+from openai import OpenAI
 
 # Load all environment variables
 load_dotenv()
@@ -62,7 +61,7 @@ doge_names_lower = {k.lower(): k for k in doge_ids.keys()}
 
 
 # Connect to AWS DynamoDB
-client = boto3.client(
+aws_client = boto3.client(
     "dynamodb",
     aws_access_key_id=AWS_ACCESS_KEY_ID,
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
@@ -77,8 +76,11 @@ dynamodb = boto3.resource(
 table = dynamodb.Table("jungleduty")
 
 
+# Connect to OpenAI
+openai_client = OpenAI(api_key=OPENAI_KEY)
+
 # Initialize bot
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.members = True
 
 help_command = commands.DefaultHelpCommand(no_category="dogeb0t commands")
@@ -139,23 +141,14 @@ Forward to victory and Doge!
 @bot.event
 async def on_message(message):
     if message.author != bot.user:
-        if message.content.startswith("dog") or message.content.startswith("d0g"):
-            # response = random.choice(responses)
-            # if message.author.id == URGOT_ID:
-            #     doge_str = f"d{'0' * random.randint(3,10)}ge"
-            #     temp = random.choice(dogical_responses)
-            #     response = f"{temp[0]}{doge_str}{temp[1]}{temp[2] * random.randint(1,5)}"
-
-            # response = "Comrade Doge, reporting for duty!"
-            # await message.channel.send(response)
-
-            response = openai.Completion.create(
-                engine="text-davinci-002",
-                prompt=f"{message.content}",
-                max_tokens=2048,
-                temperature=0.5,
+        if "dog" in message.content.lower() or "d0g" in message.content.lower():
+            completion = openai_client.completions.create(
+                model = "gpt-3.5-turbo-instruct",
+                prompt = f"You are doge, respond to the following message in a light-hearted but serious manner and don't overuse words such as `wow` or `much`: {message.content}",
+                max_tokens = 250,
+                temperature = 0.75
             )
-            await message.channel.send(response.choices[0].text)
+            await message.channel.send(completion.choices[0].text)
         elif message.content.startswith("comrade"):
             for line in comrade_text.split("\n"):
                 if line:
