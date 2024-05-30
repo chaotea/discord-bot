@@ -138,25 +138,6 @@ Forward to victory and Doge!
 """
 
 
-@bot.event
-async def on_message(message):
-    pass
-    if message.author != bot.user:
-        if "dog" in message.content.lower() or "d0g" in message.content.lower():
-            completion = openai_client.completions.create(
-                model = "gpt-3.5-turbo-instruct",
-                prompt = f"You are doge, respond to the following message in a light-hearted but serious manner and don't overuse words such as `wow` or `much`: {message.content}",
-                max_tokens = 250,
-                temperature = 0.75
-            )
-            await message.channel.send(completion.choices[0].text)
-        elif message.content.startswith("comrade"):
-            for line in comrade_text.split("\n"):
-                if line:
-                    await message.channel.send(line)
-    await bot.process_commands(message)
-
-
 @bot.command(
     help="Lists members of the channel",
     brief="Lists members of the channel"
