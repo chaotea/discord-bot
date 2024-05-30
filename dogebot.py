@@ -140,6 +140,7 @@ Forward to victory and Doge!
 
 @bot.event
 async def on_message(message):
+    pass
     if message.author != bot.user:
         if "dog" in message.content.lower() or "d0g" in message.content.lower():
             completion = openai_client.completions.create(
