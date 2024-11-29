@@ -142,7 +142,7 @@ Forward to victory and Doge!
 async def on_message(message):
     pass
     if message.author != bot.user:
-        if "dog" in message.content.lower() or "d0g" in message.content.lower():
+        if message.content.lower().startswith("dog") or message.content.lower().startswith("d0g"):
             completion = openai_client.completions.create(
                 model = "gpt-3.5-turbo-instruct",
                 prompt = f"You are doge, respond to the following message in a light-hearted but serious manner and don't overuse words such as `wow` or `much`: {message.content}",
